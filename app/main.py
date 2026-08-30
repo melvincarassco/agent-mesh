@@ -1,10 +1,12 @@
 """
 Main FastAPI Application Entrypoint.
-Assembles application configuration, logging, middlewares, exception handlers, and routers.
+Assembles application configuration, logging, middlewares, exception handlers, static dashboard UI, and routers.
 """
+from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.health import router as health_router
 from app.api.v1.router import api_v1_router
@@ -16,6 +18,9 @@ from app.core.middleware import (
     get_correlation_id,
 )
 from app.core.security import setup_cors
+
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
 
 
 def create_app() -> FastAPI:
@@ -79,6 +84,14 @@ def create_app() -> FastAPI:
                 "correlation_id": get_correlation_id(),
             },
         )
+
+    # Mount Static Files & Root Web Telemetry Dashboard
+    if STATIC_DIR.exists():
+        app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+        @app.get("/", include_in_schema=False)
+        async def serve_dashboard():
+            return FileResponse(str(STATIC_DIR / "index.html"))
 
     # Mount Routers
     app.include_router(health_router)  # Top-level /health & /ready

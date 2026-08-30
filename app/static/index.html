@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Mesh - Autonomous Multi-Agent AI Orchestrator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation / Header -->
+        <header class="navbar">
+            <div class="brand">
+                <div class="logo-icon">⚡</div>
+                <div class="brand-text">
+                    <h1>Agent Mesh</h1>
+                    <span class="subtitle">Distributed AI Systems Engine</span>
+                </div>
+            </div>
+            <div class="status-bar">
+                <div class="status-pill online" id="systemStatus">
+                    <span class="dot"></span>
+                    <span class="status-label">System Online</span>
+                </div>
+                <div class="badge">Model: Vertex AI Gemini 1.5</div>
+                <div class="badge glow">Cloud Run Native</div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="dashboard-grid">
+            <!-- Left Column: Goal Control & DAG Visualizer -->
+            <section class="left-panel">
+                <!-- Goal Submission Card -->
+                <div class="card control-card">
+                    <div class="card-header">
+                        <h2>🎯 Launch Agent Workflow</h2>
+                        <span class="hint">Enter high-level objective</span>
+                    </div>
+                    <form id="workflowForm">
+                        <textarea 
+                            id="goalInput" 
+                            placeholder="e.g. Research serverless AI trends, analyze cold-start latency mitigation, and construct a Staff Engineer report..."
+                            rows="3"
+                            required
+                        ></textarea>
+                        
+                        <div class="presets-container">
+                            <span class="preset-label">Templates:</span>
+                            <button type="button" class="preset-btn" data-goal="Research GCP Cloud Run vs GKE performance and cost efficiency">Cloud Run vs GKE</button>
+                            <button type="button" class="preset-btn" data-goal="Analyze RAG pipeline latency optimization techniques with Vertex Vector Search">RAG Latency Optimization</button>
+                            <button type="button" class="preset-btn" data-goal="Audit microservices security posture and draft automated keyless WIF pipeline specs">Security & WIF Audit</button>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="launchBtn">
+                            <span class="btn-text">🚀 Launch Agent Mesh</span>
+                            <div class="spinner hidden" id="launchSpinner"></div>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- DAG Task Execution Visualizer -->
+                <div class="card dag-card">
+                    <div class="card-header">
+                        <h2>🌳 Interactive DAG Task Tree</h2>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="dag-nodes-grid" id="dagContainer">
+                        <div class="empty-state" id="dagEmptyState">
+                            <p>Submit a goal to initialize the Planner Agent and synthesize the DAG dependency graph.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Column: Live Event Telemetry Console -->
+            <section class="right-panel">
+                <div class="card console-card">
+                    <div class="card-header">
+                        <h2>📡 Real-Time Event Stream (SSE)</h2>
+                        <div class="console-actions">
+                            <span class="badge-mini" id="workflowIdBadge">Idle</span>
+                            <button class="btn-icon" id="clearConsoleBtn" title="Clear Console">🧹</button>
+                        </div>
+                    </div>
+
+                    <div class="console-body" id="consoleBody">
+                        <div class="console-line system-line">
+                            <span class="timestamp">[SYSTEM]</span> Agent Mesh Telemetry Stream Ready. Listening on EventSource channel...
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by <strong>gcp-foundation</strong> &bull; Managed under Carassco Labs Engineering Governance Framework</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
