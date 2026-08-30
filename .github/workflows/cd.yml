@@ -1,0 +1,48 @@
+name: Continuous Deployment (Cloud Run)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-cloud-run:
+    name: Build & Deploy to GCP Cloud Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with GCP Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_WIF_SA }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authorize Docker for Artifact Registry
+        run: gcloud auth configure-docker us-docker.pkg.dev --quiet
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_URI="us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend/agent-mesh:${{ github.sha }}"
+          docker build -t $IMAGE_URI -f docker/Dockerfile.prod .
+          docker push $IMAGE_URI
+
+      - name: Deploy to GCP Cloud Run
+        run: |
+          IMAGE_URI="us-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/backend/agent-mesh:${{ github.sha }}"
+          gcloud run deploy agent-mesh \
+            --image=$IMAGE_URI \
+            --region=us-central1 \
+            --platform=managed \
+            --allow-unauthenticated
